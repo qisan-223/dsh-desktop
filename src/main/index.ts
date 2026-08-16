@@ -4,6 +4,7 @@ import os from 'node:os'
 import { app, BrowserWindow, dialog, Menu, shell } from 'electron'
 import { HarnessRuntime } from './runtime/harness-runtime'
 import { secureWindow } from './security'
+import { ensureVisionBridge } from './vision-bridge'
 import {
   activeVersion,
   applyUpdate,
@@ -356,6 +357,13 @@ async function bootstrap(): Promise<void> {
       }
     }
   })
+
+  // 启动 Harness 前，把 vendor 的 vision bridge 幂等应用到内置与 overlay 安装。
+  const bundledNodeModules = app.isPackaged
+    ? join(process.resourcesPath, 'app', 'node_modules')
+    : join(app.getAppPath(), 'node_modules')
+  ensureVisionBridge(bundledNodeModules, log)
+  ensureVisionBridge(join(updCtx.userDataDir, 'agent', 'node_modules'), log)
 
   createWindow()
   installMenu()

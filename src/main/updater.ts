@@ -9,6 +9,7 @@ import {
   writeFileSync
 } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { ensureVisionBridge } from './vision-bridge'
 
 export const DSH_PACKAGE = '@deepseek-ai/dsh'
 
@@ -280,6 +281,9 @@ export async function applyUpdate(
     throw new Error(`切换新版本失败: ${(error as Error).message}（staging 已清理）`)
   }
   rmSync(backup, { recursive: true, force: true })
+
+  // 官方更新装的是无 vision bridge 的版本，立即把 vendor 补丁应用回 overlay。
+  ensureVisionBridge(join(overlay, 'node_modules'), ctx.log)
 
   const settings = loadSettings(ctx)
   settings.skipVersion = null
