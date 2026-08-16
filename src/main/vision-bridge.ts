@@ -30,21 +30,26 @@ function bridgeMarker(nodeModulesRoot: string): string {
  * @param log 记录日志的回调（tag, message）。
  */
 export function ensureVisionBridge(nodeModulesRoot: string, log: (tag: string, message: string) => void): void {
-  if (!existsSync(nodeModulesRoot)) return
-  if (existsSync(bridgeMarker(nodeModulesRoot))) {
-    log('vision-bridge', `已存在，跳过 ${nodeModulesRoot}`)
-    return
-  }
-  let applied = 0
-  for (const pkg of BRIDGE_PACKAGES) {
-    const src = vendorLibRoot(pkg)
-    const dst = join(nodeModulesRoot, '@deepseek-ai', pkg, 'lib')
-    if (!existsSync(src) || !existsSync(dst)) continue
-    // 逐项复制，明确按“src 内容 → dst”合并覆盖（保留 dst 里官方版本独有的文件）。
-    for (const entry of readdirSync(src)) {
-      cpSync(join(src, entry), join(dst, entry), { recursive: true, force: true })
+  // 补丁重打是尽力而为：任何复制失败都只记日志、绝不阻断启动或更新流程。
+  try {
+    if (!existsSync(nodeModulesRoot)) return
+    if (existsSync(bridgeMarker(nodeModulesRoot))) {
+      log('vision-bridge', `已存在，跳过 ${nodeModulesRoot}`)
+      return
     }
-    applied += 1
+    let applied = 0
+    for (const pkg of BRIDGE_PACKAGES) {
+      const src = vendorLibRoot(pkg)
+      const dst = join(nodeModulesRoot, '@deepseek-ai', pkg, 'lib')
+      if (!existsSync(src) || !existsSync(dst)) continue
+      // 逐项复制，明确按“src 内容 → dst”合并覆盖（保留 dst 里官方版本独有的文件）。
+      for (const entry of readdirSync(src)) {
+        cpSync(join(src, entry), join(dst, entry), { recursive: true, force: true })
+      }
+      applied += 1
+    }
+    log('vision-bridge', `已应用 ${applied} 个包到 ${nodeModulesRoot}`)
+  } catch (error) {
+    log('vision-bridge', `应用失败 ${nodeModulesRoot}: ${error instanceof Error ? error.message : String(error)}`)
   }
-  log('vision-bridge', `已应用 ${applied} 个包到 ${nodeModulesRoot}`)
 }
