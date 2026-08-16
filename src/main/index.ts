@@ -271,7 +271,7 @@ async function runUpdateFlow(manual: boolean): Promise<void> {
 function installMenu(): void {
   const template: Electron.MenuItemConstructorOptions[] = [
     {
-      label: 'DSH Desktop',
+      label: 'DSH 桌面',
       submenu: [
         {
           label: '检查更新…',
@@ -288,35 +288,41 @@ function installMenu(): void {
           click: () => shell.showItemInFolder(join(app.getPath('logs'), 'harness.log'))
         },
         { type: 'separator' },
-        { role: 'quit' }
+        { role: 'quit', label: '退出' }
       ]
     },
     {
-      label: 'Edit',
+      label: '编辑',
       submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
+        { role: 'undo', label: '撤销' },
+        { role: 'redo', label: '重做' },
         { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'selectAll' }
+        { role: 'cut', label: '剪切' },
+        { role: 'copy', label: '复制' },
+        { role: 'paste', label: '粘贴' },
+        { role: 'selectAll', label: '全选' }
       ]
     },
     {
-      label: 'View',
+      label: '视图',
       submenu: [
-        { role: 'reload' },
-        { role: 'toggleDevTools' },
+        { role: 'reload', label: '重新加载' },
+        { role: 'toggleDevTools', label: '开发者工具' },
         { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
+        { role: 'resetZoom', label: '重置缩放' },
+        { role: 'zoomIn', label: '放大' },
+        { role: 'zoomOut', label: '缩小' },
         { type: 'separator' },
-        { role: 'togglefullscreen' }
+        { role: 'togglefullscreen', label: '切换全屏' }
       ]
     },
-    { label: 'Window', submenu: [{ role: 'minimize' }, { role: 'close' }] }
+    {
+      label: '窗口',
+      submenu: [
+        { role: 'minimize', label: '最小化' },
+        { role: 'close', label: '关闭' }
+      ]
+    }
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
