@@ -1,0 +1,15 @@
+# pnpm 11 起，构建脚本白名单用 allowBuilds（map 格式）。
+# 这些包需要运行 postinstall/build 脚本（原生模块编译/下载二进制）。
+allowBuilds:
+  '@deepseek-ai/dsh-subprocess-local': true
+  '@google/genai': true
+  electron-winstaller: true
+  esbuild: true
+  koffi: true
+  node-pty: true
+  protobufjs: true
+
+# dsh 生态是「全 peer」设计：~90 个 @deepseek-ai 包互为 peerDependencies。
+# pnpm 默认把它们藏在 .pnpm 嵌套里，electron-builder 打包时会漏掉。
+# 提升到顶层 node_modules（等同 npm 扁平化），确保打包完整。
+shamefullyHoist: true

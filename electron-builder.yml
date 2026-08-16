@@ -1,0 +1,53 @@
+appId: com.qisan223.dshdesktop
+productName: DSH Desktop
+copyright: MIT License
+
+# 仅保留中英文，移除 Electron 其余语言包（约 80MB）。
+electronLanguages:
+  - en-US
+  - zh-CN
+
+directories:
+  output: dist
+  buildResources: build
+
+# electron-builder 会剥离 extraResources 里的嵌套 node_modules，此钩子恢复
+# 内置 npm CLI 自身的依赖。
+afterPack: scripts/after-pack.cjs
+
+# 原生模块（sharp / node-pty / koffi）由内置的独立 node.exe 加载，
+# 因此保持真实文件、绝不为 Electron 重编译。
+asar: false
+npmRebuild: false
+buildDependenciesFromSource: false
+
+files:
+  - out/**/*
+  - node_modules/**/*
+  - package.json
+
+extraResources:
+  - from: vendor/node/node.exe
+    to: node/node.exe
+  - from: vendor/npm
+    to: npm
+
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+
+nsis:
+  artifactName: dsh-desktop-windows-${arch}-setup.${ext}
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: DSH Desktop
+
+portable:
+  artifactName: dsh-desktop-${version}-portable-${arch}.${ext}

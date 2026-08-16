@@ -1,0 +1,36 @@
+{
+  "name": "dsh-desktop",
+  "productName": "DSH Desktop",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness (dsh) 开箱即用的 Windows 桌面客户端：内置 dsh CLI 与 Node 运行时，一键启动 Web UI，支持承接官方 dsh 更新（用户自主选择）",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "author": "qisan-223",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json",
+    "test": "vitest run",
+    "fetch-node": "node scripts/fetch-node.mjs",
+    "fetch-npm": "node scripts/fetch-npm.mjs",
+    "fetch-runtime": "node scripts/fetch-node.mjs && node scripts/fetch-npm.mjs",
+    "setup-electron": "install-electron",
+    "package:dir": "pnpm run build && electron-builder --dir",
+    "package:win": "pnpm run build && electron-builder --win --x64 --publish never"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.1.0-rc.6",
+    "@deepseek-ai/cordis-plugin-group": "1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "electron": "43.4.0",
+    "electron-builder": "26.15.3",
+    "electron-vite": "5.0.0",
+    "npm": "12.0.2",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}
